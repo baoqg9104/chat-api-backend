@@ -1,0 +1,565 @@
+{
+  "info": {
+    "version": "1.0",
+    "title": "My App"
+  },
+  "definitions": {
+    "Message": {
+      "description": "A message in the chat system",
+      "example": {
+        "message": {
+          "content": "Hello!",
+          "id": 1,
+          "receiver_id": "456",
+          "sender_id": "123",
+          "timestamp": "2023-10-01T12:00:00Z"
+        }
+      },
+      "properties": {
+        "content": {
+          "description": "Content of the message",
+          "type": "string"
+        },
+        "id": {
+          "description": "ID of the message",
+          "type": "integer"
+        },
+        "receiver_id": {
+          "description": "ID of the receiver",
+          "type": "string"
+        },
+        "sender_id": {
+          "description": "ID of the sender",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "Timestamp of when the message was sent",
+          "format": "date_time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receiver_id",
+        "sender_id",
+        "content",
+        "id"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "MessageParams": {
+      "description": "Parameters for creating or updating a message",
+      "example": {
+        "message": {
+          "content": "Hello!",
+          "receiver_id": "456",
+          "sender_id": "123"
+        }
+      },
+      "properties": {
+        "content": {
+          "description": "Content of the message",
+          "type": "string"
+        },
+        "receiver_id": {
+          "description": "ID of the receiver",
+          "type": "string"
+        },
+        "sender_id": {
+          "description": "ID of the sender",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receiver_id",
+        "sender_id",
+        "content"
+      ],
+      "title": "MessageParams",
+      "type": "object"
+    },
+    "MessageUpdateParams": {
+      "description": "Parameters for updating a message",
+      "example": {
+        "message": {
+          "content": "Updated content",
+          "status": "read"
+        }
+      },
+      "properties": {
+        "content": {
+          "description": "Content of the message",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status of the message (e.g., sent, read)",
+          "type": "string"
+        }
+      },
+      "title": "MessageUpdateParams",
+      "type": "object"
+    },
+    "User": {
+      "description": "User information",
+      "example": {
+        "data": {
+          "email": "john.doe@example.com",
+          "id": 1,
+          "inserted_at": "2023-01-01T12:00:00Z",
+          "status": "active",
+          "updated_at": "2023-01-01T12:00:00Z",
+          "username": "johndoe"
+        }
+      },
+      "properties": {
+        "email": {
+          "description": "The user's email address",
+          "format": "email",
+          "type": "string"
+        },
+        "id": {
+          "description": "User ID",
+          "type": "integer"
+        },
+        "inserted_at": {
+          "description": "Creation time",
+          "format": "datetime",
+          "type": "string"
+        },
+        "status": {
+          "description": "The user's status",
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "Last update time",
+          "format": "datetime",
+          "type": "string"
+        },
+        "username": {
+          "description": "The user's username",
+          "type": "string"
+        }
+      },
+      "title": "User",
+      "type": "object"
+    },
+    "UserParams": {
+      "description": "Parameters for creating a new user",
+      "example": {
+        "user": {
+          "email": "john.doe@example.com",
+          "password": "secretpassword",
+          "status": "active",
+          "username": "johndoe"
+        }
+      },
+      "properties": {
+        "email": {
+          "description": "The user's email address",
+          "format": "email",
+          "type": "string"
+        },
+        "password": {
+          "description": "The user's password",
+          "minLength": 6,
+          "type": "string"
+        },
+        "status": {
+          "description": "Account status (e.g., active, inactive)",
+          "type": "string"
+        },
+        "username": {
+          "description": "The user's username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "password",
+        "email",
+        "username"
+      ],
+      "title": "UserParams",
+      "type": "object"
+    },
+    "UserUpdateParams": {
+      "description": "Parameters for updating a user",
+      "example": {
+        "user": {
+          "status": "active",
+          "username": "johndoe"
+        }
+      },
+      "properties": {
+        "status": {
+          "description": "Account status (e.g., active, inactive)",
+          "type": "string"
+        },
+        "username": {
+          "description": "The user's username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "username"
+      ],
+      "title": "UserUpdateParams",
+      "type": "object"
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "in": "header",
+      "name": "authorization",
+      "type": "apiKey",
+      "description": "Enter 'Bearer <token>'"
+    }
+  },
+  "paths": {
+    "/api/messages": {
+      "get": {
+        "description": "Returns a list of all messages in the system",
+        "operationId": "ChatApiWeb.MessageController.index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Get the list of messages",
+        "tags": [
+          "Messages"
+        ]
+      },
+      "post": {
+        "description": "Create and save new message information into the system",
+        "operationId": "ChatApiWeb.MessageController.create",
+        "parameters": [
+          {
+            "description": "Message information",
+            "in": "body",
+            "name": "message",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageParams"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully created",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          "422": {
+            "description": "Invalid data"
+          }
+        },
+        "summary": "Create a new message",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/messages/user/{user_id}": {
+      "get": {
+        "description": "Returns a list of messages exchanged between two users",
+        "operationId": "ChatApiWeb.MessageController.user_messages",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        },
+        "summary": "Get messages between two users",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/messages/{id}": {
+      "delete": {
+        "description": "Deletes a message based on its ID",
+        "operationId": "ChatApiWeb.MessageController.delete",
+        "parameters": [
+          {
+            "description": "Message ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "404": {
+            "description": "Message not found"
+          }
+        },
+        "summary": "Delete a message",
+        "tags": [
+          "Messages"
+        ]
+      },
+      "get": {
+        "description": "Returns detailed information of a message based on its ID",
+        "operationId": "ChatApiWeb.MessageController.show",
+        "parameters": [
+          {
+            "description": "Message ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          "404": {
+            "description": "Message not found"
+          }
+        },
+        "summary": "View message details",
+        "tags": [
+          "Messages"
+        ]
+      },
+      "put": {
+        "description": "Updates the information of a message based on its ID",
+        "operationId": "ChatApiWeb.MessageController.update",
+        "parameters": [
+          {
+            "description": "Message ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Updated message information",
+            "in": "body",
+            "name": "message",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageUpdateParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          "422": {
+            "description": "Invalid data"
+          }
+        },
+        "summary": "Update message information",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/users": {
+      "get": {
+        "description": "Returns a list of all users in the system",
+        "operationId": "ChatApiWeb.UserController.index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Get the list of users",
+        "tags": [
+          "Users"
+        ]
+      },
+      "post": {
+        "description": "Create and save new user information into the system",
+        "operationId": "ChatApiWeb.UserController.create",
+        "parameters": [
+          {
+            "description": "User information",
+            "in": "body",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserParams"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "422": {
+            "description": "Invalid data"
+          }
+        },
+        "summary": "Create a new user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/authenticate": {
+      "post": {
+        "description": "Authenticates a user with email and password",
+        "operationId": "ChatApiWeb.UserController.authenticate",
+        "parameters": [
+          {
+            "description": "Email",
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Password",
+            "in": "query",
+            "name": "password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authenticated successfully",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Authenticate a user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "description": "Returns detailed information of the currently authenticated user",
+        "operationId": "ChatApiWeb.UserController.me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "summary": "View current user details",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/{id}": {
+      "delete": {
+        "description": "Deletes a user from the system based on their ID",
+        "operationId": "ChatApiWeb.UserController.delete",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Delete a user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "put": {
+        "description": "Updates the information of a user based on their ID",
+        "operationId": "ChatApiWeb.UserController.update",
+        "parameters": [
+          {
+            "description": "User ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "User information to be updated",
+            "in": "body",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUpdateParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "422": {
+            "description": "Invalid data"
+          }
+        },
+        "summary": "Update user information",
+        "tags": [
+          "Users"
+        ]
+      }
+    }
+  },
+  "swagger": "2.0"
+}
